@@ -43,7 +43,7 @@ class PhoneNumber
     private $active;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $primaryPhoneNumber;
 
