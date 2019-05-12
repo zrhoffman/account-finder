@@ -11,7 +11,8 @@ class PhoneNumber
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class="Doctrine\ORM\Id\AssignedGenerator")
      * @ORM\Column(type="integer")
      */
     private $id;
@@ -49,6 +50,13 @@ class PhoneNumber
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getContact(): ?Contact
