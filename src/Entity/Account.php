@@ -31,7 +31,6 @@ class Account
     public function __construct()
     {
         $this->contacts = new ArrayCollection();
-        $this->contacts = new ArrayCollection();
     }
 
     public function getId(): ?int
