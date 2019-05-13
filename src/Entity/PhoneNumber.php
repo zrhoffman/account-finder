@@ -9,6 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PhoneNumber
 {
+    public static $exposedAttributes = [
+        'phoneNumber',
+    ];
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="CUSTOM")

@@ -11,6 +11,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Account
 {
+    public static $exposedAttributes = [
+        'id',
+        'contacts',
+    ];
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="CUSTOM")
