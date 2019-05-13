@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Account;
 use App\Entity\Contact;
+use App\Entity\PhoneNumber;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -19,32 +21,31 @@ class ContactRepository extends ServiceEntityRepository
         parent::__construct($registry, Contact::class);
     }
 
-    // /**
-    //  * @return Contact[] Returns an array of Contact objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findPrimaryContactsByAccount(Account $account): array
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $contactsDQL = $this->createQueryBuilder('contact')
+            ->where('contact.account = :accountValue')
+            ->setParameter('accountValue', $account)
+            ->andWhere('contact.accountOwner = :ownerValue')
+            ->setParameter('ownerValue', true)
+            ->getDQL();
 
-    /*
-    public function findOneBySomeField($value): ?Contact
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $queryParameters = [
+            'accountValue' => $account,
+            'ownerValue' => true,
+        ];
+
+        /* @var PhoneNumberRepository $phoneNumberRepository */
+        $phoneNumberRepository = $this->_em->getRepository(PhoneNumber::class);
+        $phoneNumbers = $phoneNumberRepository->findPrimaryPhoneNumbersByContacts($contactsDQL, $queryParameters);
+
+        $contacts = [];
+
+        /* @var PhoneNumber $phoneNumber */
+        foreach ($phoneNumbers as $phoneNumber) {
+            $contacts[] = $phoneNumber->getContact();
+        }
+
+        return $contacts;
     }
-    */
 }

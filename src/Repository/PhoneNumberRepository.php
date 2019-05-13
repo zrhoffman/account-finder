@@ -19,32 +19,28 @@ class PhoneNumberRepository extends ServiceEntityRepository
         parent::__construct($registry, PhoneNumber::class);
     }
 
-    // /**
-    //  * @return PhoneNumber[] Returns an array of PhoneNumber objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findPrimaryPhoneNumbersByContacts(string $contactsDQL, array $queryParameters) : array
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $expression = $this->getEntityManager()->getExpressionBuilder();
 
-    /*
-    public function findOneBySomeField($value): ?PhoneNumber
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $query = $this->createQueryBuilder('phoneNumber')
+
+            ->where(
+                $expression->in(
+                    'phoneNumber.contact',
+                    $contactsDQL
+                )
+            )
+            ->andWhere('phoneNumber.primaryPhoneNumber = :primaryValue')
+            ->setParameter('primaryValue', true);
+
+        foreach ($queryParameters as $parameter => $value) {
+           $query->setParameter($parameter, $value);
+        }
+
+        $phoneNumbers = $query->getQuery()
+            ->execute();
+
+        return $phoneNumbers;
     }
-    */
 }
