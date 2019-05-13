@@ -14,6 +14,7 @@ class AccountController extends ApiController
      * @Get(
      *     "/accounts/{status<all|active|inactive>}.{_format}",
      *     defaults={"_format"="json", "status"="active"},
+     *     condition="request.get('direction', 'desc') in ['desc', 'asc']",
      *     )
      * @param Request $request
      * @param string $status
@@ -23,11 +24,18 @@ class AccountController extends ApiController
     {
         $entityManager = $this->getDoctrine()->getManager();
 
+        $sortDirection = $request->get('direction', 'desc');
+        $sortColumn = $request->get('sort', 'id');
+        $columnNames = $entityManager->getClassMetadata(Account::class)->getFieldNames();
+        if (array_search($sortColumn, $columnNames, true) === false) {
+            throw $this->createNotFoundException('Invalid sort column.');
+        }
+
         /* @var AccountRepository $accountRepository */
         $accountRepository = $entityManager->getRepository(Account::class);
         $query = $accountRepository->findByStatus($status);
 
-        $accounts = $query
+        $accounts = $query->orderBy('account.' . $sortColumn, $sortDirection)
             ->getQuery()
             ->execute();
 

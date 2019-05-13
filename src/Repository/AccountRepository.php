@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Account;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -19,7 +20,7 @@ class AccountRepository extends ServiceEntityRepository
         parent::__construct($registry, Account::class);
     }
 
-    public function findByStatus(string $status)
+    public function findByStatus(string $status): QueryBuilder
     {
         $query = $this->createQueryBuilder('account');
 

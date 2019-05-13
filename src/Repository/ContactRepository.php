@@ -5,8 +5,8 @@ namespace App\Repository;
 use App\Entity\Account;
 use App\Entity\Contact;
 use App\Entity\PhoneNumber;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * @method Contact|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,38 +14,27 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  * @method Contact[]    findAll()
  * @method Contact[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ContactRepository extends ServiceEntityRepository
+class ContactRepository extends EntityRepository
 {
-    public function __construct(RegistryInterface $registry)
+    public function findPrimaryContactsByAccount(Account $account): QueryBuilder
     {
-        parent::__construct($registry, Contact::class);
-    }
+        $entityManager = $this->getEntityManager();
+        $expression = $entityManager->getExpressionBuilder();
 
-    public function findPrimaryContactsByAccount(Account $account): array
-    {
-        $contactsDQL = $this->createQueryBuilder('contact')
+        $query = $this->createQueryBuilder('contact')
             ->where('contact.account = :accountValue')
             ->setParameter('accountValue', $account)
-            ->andWhere('contact.accountOwner = :ownerValue')
-            ->setParameter('ownerValue', true)
-            ->getDQL();
+            ->andWhere(
+                $expression->in(
+                    ':primaryValue',
+                    $entityManager->createQueryBuilder()
+                        ->select('phoneNumber.primaryPhoneNumber')
+                        ->from(PhoneNumber::class, 'phoneNumber')
+                        ->getDQL()
+                )
+            )
+            ->setParameter('primaryValue', true);
 
-        $queryParameters = [
-            'accountValue' => $account,
-            'ownerValue' => true,
-        ];
-
-        /* @var PhoneNumberRepository $phoneNumberRepository */
-        $phoneNumberRepository = $this->_em->getRepository(PhoneNumber::class);
-        $phoneNumbers = $phoneNumberRepository->findPrimaryPhoneNumbersByContacts($contactsDQL, $queryParameters);
-
-        $contacts = [];
-
-        /* @var PhoneNumber $phoneNumber */
-        foreach ($phoneNumbers as $phoneNumber) {
-            $contacts[] = $phoneNumber->getContact();
-        }
-
-        return $contacts;
+        return $query;
     }
 }
