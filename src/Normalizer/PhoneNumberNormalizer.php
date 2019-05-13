@@ -36,7 +36,7 @@ class PhoneNumberNormalizer extends GetSetMethodNormalizer
 
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        /* Symfony does not want Entities to have properties named "primary". */
+        /* Symfony does not want entities to have properties named "primary". */
         $data['primaryPhoneNumber'] = $data['primary'];
         unset($data['primary']);
 
