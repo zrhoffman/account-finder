@@ -19,12 +19,15 @@ class AccountRepository extends ServiceEntityRepository
         parent::__construct($registry, Account::class);
     }
 
-    public function findByActive(bool $active)
+    public function findByStatus(string $status)
     {
-        return $this->createQueryBuilder('account')
-            ->where('account.active = :value')
-            ->setParameter('value', $active)
-            ->getQuery()
-            ->execute();
+        $query = $this->createQueryBuilder('account');
+
+        if ($status !== 'all') {
+            $query->where('account.active = :value')
+                ->setParameter('value', $status === 'active');
+        }
+
+        return $query;
     }
 }
