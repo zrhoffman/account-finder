@@ -49,7 +49,7 @@ class PhoneNumber
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $primary;
+    private $primaryPhoneNumber;
 
     public function getId(): ?int
     {
@@ -123,14 +123,14 @@ class PhoneNumber
         return $this;
     }
 
-    public function getPrimary(): ?bool
+    public function getPrimaryPhoneNumber(): ?bool
     {
-        return $this->primary;
+        return $this->primaryPhoneNumber;
     }
 
-    public function setPrimary(bool $primary): self
+    public function setPrimaryPhoneNumber(bool $primaryPhoneNumber): self
     {
-        $this->primary = $primary;
+        $this->primaryPhoneNumber = $primaryPhoneNumber;
 
         return $this;
     }
