@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Account;
 use App\Entity\Contact;
 use App\Entity\PhoneNumber;
+use App\Normalizer\PhoneNumberNormalizer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
@@ -31,7 +32,8 @@ class AppFixtures extends Fixture
     public function load(ObjectManager /* @var EntityManager $manager */ $manager)
     {
         $normalizers = [
-            new GetSetMethodNormalizer()
+            new PhoneNumberNormalizer(),
+            new GetSetMethodNormalizer(),
         ];
 
         $serializer = new Serializer(
