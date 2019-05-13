@@ -8,7 +8,7 @@ use App\Repository\ContactRepository;
 use FOS\RestBundle\Controller\Annotations\Get;
 use Symfony\Component\HttpFoundation\Response;
 
-class ContactController extends ApiController
+class AccountContactController extends ApiController
 {
     /**
      * @Get("/accounts/{account}/contacts/primary.{_format}", defaults={"_format"="json"}, requirements={"accountId"="\d+"})
