@@ -35,7 +35,7 @@ class AccountNormalizer extends GetSetMethodNormalizer
         $accountArray = array_merge(
             array_slice($accountArray, 0, $contactsIndex),
             [
-                'numberOfContacts' => count($accountArray['contacts']),
+                'contactsCount' => count($accountArray['contacts']),
             ],
             array_slice($accountArray, $contactsIndex)
         );
